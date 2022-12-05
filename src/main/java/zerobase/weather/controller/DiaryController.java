@@ -31,10 +31,10 @@ public class DiaryController {
 	// API 경로를 지정해야함
 	// Get - 조회, Post - 저장
 	// date는 여러 형식이므로 정책을 정해야한다.
-	@ApiOperation(value = "일기 텍스트와 날씨를 이용해서 DB에 일기 저장", notes = "이것은 노트") // 안쓰면 기본 함수명임
+	@ApiOperation(value = "일기 텍스트와 날씨를 이용해서 DB에 일기 저장") // 안쓰면 기본 함수명임
 	@PostMapping("/create/diary")
 	void createDiary(
-		@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
+		@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "생성할 날짜", example = "2022-01-01") LocalDate date,
 		@RequestBody String text
 	) {
 		diaryService.createDiary(date, text);
@@ -42,26 +42,28 @@ public class DiaryController {
 
 	@ApiOperation("선택한 날짜의 모든 일기 데이터를 가져옵니다.")
 	@GetMapping("/read/diary")
-	List<Diary> readDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+	List<Diary> readDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "조회할 날짜", example = "2022-01-01") LocalDate date) {
 		return diaryService.readDiary(date);
 	}
 
 	@ApiOperation("선택한 기간 중 모든 일기 데이터를 가져옵니다.")
 	@GetMapping("/read/diaries")
-	List<Diary> readDiaries(@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "조회할 기간의 첫번쨰", example = "2022-02-02") LocalDate startDate,
-		@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "조회할 기간의 마지막날", example = "2022-02-02") LocalDate endDate) {
+	List<Diary> readDiaries(@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "조회할 기간의 첫번째 날", example = "2022-01-01") LocalDate startDate,
+		@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "조회할 기간의 마지막날", example = "2022-12-31") LocalDate endDate) {
 		return diaryService.readDiaries(startDate, endDate);
 	}
 
 	// 그 날짜에 제일 첫번째 일기 수정으로 제한
+	@ApiOperation("일기 텍스트와 날씨를 이용해서 DB에 일기 수정")
 	@PutMapping("/update/diary")
-	void updateDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date,
+	void updateDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "수정할 날짜", example = "2022-01-01") LocalDate date,
 		@RequestBody String text) {
 		diaryService.updateDiary(date, text);
 	}
 
+	@ApiOperation("일기 텍스트와 날씨를 이용해서 DB에 일기 삭제")
 	@DeleteMapping("/delete/diary")
-	void deleteDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) LocalDate date) {
+	void deleteDiary(@RequestParam @DateTimeFormat(iso = ISO.DATE) @ApiParam(value = "삭제할 날짜", example = "2022-01-01") LocalDate date) {
 		diaryService.deleteDiary(date);
 	}
 
